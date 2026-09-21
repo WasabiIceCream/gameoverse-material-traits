@@ -31,19 +31,45 @@ means trait bonuses apply universally, regardless of how the item was
 obtained.
 
 `MaterialTraits.java` holds a simple `Item -> List<TraitEntry>` registry,
-populated at init. Currently just Gold (armor: +1% movement speed per
-piece, stacking to +4% for a full set; tools: +2 mining efficiency, +1
-luck while held) as the validated pilot material. Iron is deliberately
-untouched — vanilla's existing "balanced generalist, no bonus, no
-drawback" identity for iron already fits the intended design.
+populated at init via small `register<Material>Traits()` methods (using
+`ArmorSet`/`ToolSet` + `addArmorTrait`/`addToolTrait` helpers so each
+material's registration is a few lines, not the original hand-written
+Gold pattern repeated 6 more times).
+
+## The full table (2026-09-21)
+
+One signature trait per material, not a pile of small bonuses, and never
+touching vanilla's own armor/durability/damage numbers — those already
+carry the linear-progression backbone; every trait here layers a real
+vanilla attribute on top.
+
+| Material | Armor trait | Tool trait |
+|---|---|---|
+| Leather | +2 `safe_fall_distance`/piece — "padded landing" | *(no tools)* |
+| Chainmail | +0.02 `knockback_resistance`/piece | *(no tools)* |
+| Copper | +0.15 `water_movement_efficiency`/piece | +1 `mining_efficiency` |
+| Wood | *(no armor)* | +0.5 `attack_speed` — "light and quick" |
+| Stone | *(none — deliberate)* | *(none — deliberate)* |
+| Iron | *(none — deliberate)* | *(none — deliberate)* |
+| Gold | +1% `movement_speed`/piece (stacks to +4%) | +2 `mining_efficiency`, +1 `luck` |
+| Diamond | +0.15 `armor_toughness`/piece | +1 `mining_efficiency` |
+| Netherite | +0.025 `knockback_resistance`/piece (on top of its real 0.1 base) | +1 `attack_knockback` |
+
+Stone and Iron are deliberately bare — two honest "no bonus, no drawback"
+baselines at different power points, matching vanilla's own existing feel
+for those tiers. Diamond's mining bonus is intentionally smaller than
+Gold's, so Gold keeps its "fastest miner" identity rather than getting
+crowded out by the higher tier.
 
 ## Next steps
 
-Extend `registerGoldTraits()`-style methods to the rest of the material
-table (Wood, Stone, Copper, Diamond, Netherite, and eventually mod-added
-materials) once the full trait design is finalized — see
-`docs/current-state.md` in the project root for the design sketch and
-research (Better Than Adventure's per-material damage-type specialization,
-Raspberry Flavoured's `ItemAttributeModifierEvent`-based implementation,
-Spell Power's resistance-attribute system for elemental/magical traits
-later on).
+- **Elemental/magical traits** (e.g. Diamond resisting fire) — deferred,
+  since vanilla has no attribute for damage-type resistance. Spell Power
+  (already installed on this server, same author as the RPG Series mods)
+  is the planned foundation: its `spell_power:resistance.*` attributes
+  already hook real vanilla damage types via `SpellResistance.resist()`,
+  not just its own spell-school damage, so this shouldn't need a custom
+  attribute built from scratch.
+- **Mod-added materials** — deliberately out of scope until it's clear
+  which ones are actually staying in the pack (a lot of that got sorted
+  out during the SimplySwords/RPG-Series overlap work).
