@@ -28,14 +28,17 @@ import net.minecraft.world.item.Items;
  * modifier-gathering path rather than an item's static default component, it applies
  * universally - crafted, looted, traded, or /given.
  *
- * <p>Design philosophy per material (matching what BTA/Raspberry Flavoured research found):
- * one clear signature trait, not a pile of small bonuses, and never touching the raw vanilla
- * armor/durability/damage numbers - those already provide the linear-progression backbone, and
- * every trait here is layered on top via real vanilla attributes only (no custom attributes
- * yet - elemental/magical traits are a planned follow-up leaning on Spell Power's already-
- * installed resistance-attribute system instead of building one from scratch). Iron and Stone
- * are deliberately untouched: two honest "no bonus, no drawback" baselines at different power
- * points, matching vanilla's own existing feel for those tiers.
+ * <p>Design philosophy per material: one clear signature trait, not a pile of small bonuses, and
+ * never touching the raw vanilla armor/durability/damage numbers - those already provide the
+ * linear-progression backbone, and every trait here is layered on top, either via a real vanilla
+ * attribute or a custom one ({@link MaterialAttributes}). Traits are checked against both Better
+ * Than Adventure and Raspberry Flavoured where a real precedent exists (Leather/Diamond/Chainmail
+ * all match one or both); where neither reference gives a material a combat-relevant trait at
+ * all (Wood, Iron, Stone), it's left deliberately bare rather than inventing one - two of those
+ * three (Iron, Stone) double as honest "no bonus, no drawback" baselines at different power
+ * points, matching vanilla's own existing feel. Copper, Gold's tool trait, and Netherite's tool
+ * trait have no clean reference equivalent either way (RF's copper/gold mechanics are
+ * status-effect/loot-table based, not attribute-shaped) and stay as original design.
  */
 public class MaterialTraits implements ModInitializer {
    public record TraitEntry(Holder<Attribute> attribute, AttributeModifier modifier, EquipmentSlotGroup group) {
@@ -126,8 +129,7 @@ public class MaterialTraits implements ModInitializer {
       registerLeatherTraits();
       registerChainmailTraits();
       registerCopperTraits();
-      registerWoodTraits();
-      // Stone and Iron: deliberately no traits - see class javadoc.
+      // Wood, Stone, and Iron: deliberately no traits - see class javadoc.
       registerGoldTraits();
       registerDiamondTraits();
       registerNetheriteTraits();
@@ -139,10 +141,16 @@ public class MaterialTraits implements ModInitializer {
       addArmorTrait(set, "leather", "safe_fall", Attributes.SAFE_FALL_DISTANCE, 2.0, Operation.ADD_VALUE);
    }
 
-   /** Chainmail: best knockback resistance of the early armors - "heavy interlocking rings." */
+   /**
+    * Chainmail: reduces melee and projectile damage - matches both reference mods (Raspberry
+    * Flavoured: "deals damage to attackers"; Better Than Adventure: "excels at reducing melee and
+    * projectile damage"). Picked the BTA framing (straight damage reduction) over RF's
+    * reflect-to-attacker mechanic since it reuses the same resistance-attribute infrastructure
+    * built for Diamond's fire resistance, rather than needing a whole separate thorns-style hook.
+    */
    private static void registerChainmailTraits() {
       ArmorSet set = new ArmorSet(Items.CHAINMAIL_HELMET, Items.CHAINMAIL_CHESTPLATE, Items.CHAINMAIL_LEGGINGS, Items.CHAINMAIL_BOOTS);
-      addArmorTrait(set, "chainmail", "knockback_resist", Attributes.KNOCKBACK_RESISTANCE, 0.02, Operation.ADD_VALUE);
+      addArmorTrait(set, "chainmail", "physical_resistance", MaterialAttributes.PHYSICAL_RESISTANCE, 0.05, Operation.ADD_VALUE);
    }
 
    /**
@@ -155,12 +163,6 @@ public class MaterialTraits implements ModInitializer {
 
       ToolSet tools = new ToolSet(Items.COPPER_SWORD, Items.COPPER_PICKAXE, Items.COPPER_AXE, Items.COPPER_SHOVEL, Items.COPPER_HOE);
       addMiningTrait(tools, "copper", "mining_efficiency", Attributes.MINING_EFFICIENCY, 1.0, Operation.ADD_VALUE);
-   }
-
-   /** Wood: no armor in vanilla. Tools: quickest swing of any tier - "light and quick." */
-   private static void registerWoodTraits() {
-      ToolSet tools = new ToolSet(Items.WOODEN_SWORD, Items.WOODEN_PICKAXE, Items.WOODEN_AXE, Items.WOODEN_SHOVEL, Items.WOODEN_HOE);
-      addToolTrait(tools, "wood", "attack_speed", Attributes.ATTACK_SPEED, 0.5, Operation.ADD_VALUE);
    }
 
    /**
@@ -180,11 +182,17 @@ public class MaterialTraits implements ModInitializer {
    /**
     * Diamond: hardest edge and toughest defense of the non-endgame tiers - a modest bump to
     * each, deliberately smaller than Gold's mining/luck bonus and Netherite's real defaults, so
-    * neither of those materials' own identity gets crowded out.
+    * neither of those materials' own identity gets crowded out. Also gets +8% fire resistance
+    * per armor piece (+32% full set) - matches Better Than Adventure's own wording almost
+    * exactly ("Diamond armor provides significant damage reduction against fire and heat
+    * sources"). Raspberry Flavoured instead says Diamond has no special properties at all and
+    * gives Gold slight fire protection - the two references disagree, and BTA's is the more
+    * specific/deliberate one, so that's what this follows.
     */
    private static void registerDiamondTraits() {
       ArmorSet armor = new ArmorSet(Items.DIAMOND_HELMET, Items.DIAMOND_CHESTPLATE, Items.DIAMOND_LEGGINGS, Items.DIAMOND_BOOTS);
       addArmorTrait(armor, "diamond", "toughness", Attributes.ARMOR_TOUGHNESS, 0.15, Operation.ADD_VALUE);
+      addArmorTrait(armor, "diamond", "fire_resistance", MaterialAttributes.FIRE_RESISTANCE, 0.08, Operation.ADD_VALUE);
 
       ToolSet tools = new ToolSet(Items.DIAMOND_SWORD, Items.DIAMOND_PICKAXE, Items.DIAMOND_AXE, Items.DIAMOND_SHOVEL, Items.DIAMOND_HOE);
       addMiningTrait(tools, "diamond", "mining_efficiency", Attributes.MINING_EFFICIENCY, 1.0, Operation.ADD_VALUE);
