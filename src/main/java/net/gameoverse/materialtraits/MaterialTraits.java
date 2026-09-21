@@ -66,10 +66,22 @@ public class MaterialTraits implements ModInitializer {
       List<Item> all() {
          return List.of(this.sword(), this.pickaxe(), this.axe(), this.shovel(), this.hoe());
       }
+
+      /** The 4 tools that actually break blocks - excludes the sword, which mining_efficiency does nothing for. */
+      List<Item> mining() {
+         return List.of(this.pickaxe(), this.axe(), this.shovel(), this.hoe());
+      }
    }
 
    private static void addToolTrait(ToolSet set, String materialName, String traitName, Holder<Attribute> attribute, double amount, Operation operation) {
       for (Item tool : set.all()) {
+         add(tool, attribute, materialName + "_" + toolSuffix(tool) + "_" + traitName, amount, operation, EquipmentSlotGroup.MAINHAND);
+      }
+   }
+
+   /** Same as {@link #addToolTrait}, but skips the sword - for traits like mining_efficiency that a sword can't use. */
+   private static void addMiningTrait(ToolSet set, String materialName, String traitName, Holder<Attribute> attribute, double amount, Operation operation) {
+      for (Item tool : set.mining()) {
          add(tool, attribute, materialName + "_" + toolSuffix(tool) + "_" + traitName, amount, operation, EquipmentSlotGroup.MAINHAND);
       }
    }
@@ -142,7 +154,7 @@ public class MaterialTraits implements ModInitializer {
       addArmorTrait(armor, "copper", "water_efficiency", Attributes.WATER_MOVEMENT_EFFICIENCY, 0.15, Operation.ADD_VALUE);
 
       ToolSet tools = new ToolSet(Items.COPPER_SWORD, Items.COPPER_PICKAXE, Items.COPPER_AXE, Items.COPPER_SHOVEL, Items.COPPER_HOE);
-      addToolTrait(tools, "copper", "mining_efficiency", Attributes.MINING_EFFICIENCY, 1.0, Operation.ADD_VALUE);
+      addMiningTrait(tools, "copper", "mining_efficiency", Attributes.MINING_EFFICIENCY, 1.0, Operation.ADD_VALUE);
    }
 
    /** Wood: no armor in vanilla. Tools: quickest swing of any tier - "light and quick." */
@@ -161,7 +173,7 @@ public class MaterialTraits implements ModInitializer {
       addArmorTrait(armor, "gold", "speed", Attributes.MOVEMENT_SPEED, 0.01, Operation.ADD_MULTIPLIED_BASE);
 
       ToolSet tools = new ToolSet(Items.GOLDEN_SWORD, Items.GOLDEN_PICKAXE, Items.GOLDEN_AXE, Items.GOLDEN_SHOVEL, Items.GOLDEN_HOE);
-      addToolTrait(tools, "gold", "mining_efficiency", Attributes.MINING_EFFICIENCY, 2.0, Operation.ADD_VALUE);
+      addMiningTrait(tools, "gold", "mining_efficiency", Attributes.MINING_EFFICIENCY, 2.0, Operation.ADD_VALUE);
       addToolTrait(tools, "gold", "luck", Attributes.LUCK, 1.0, Operation.ADD_VALUE);
    }
 
@@ -175,7 +187,7 @@ public class MaterialTraits implements ModInitializer {
       addArmorTrait(armor, "diamond", "toughness", Attributes.ARMOR_TOUGHNESS, 0.15, Operation.ADD_VALUE);
 
       ToolSet tools = new ToolSet(Items.DIAMOND_SWORD, Items.DIAMOND_PICKAXE, Items.DIAMOND_AXE, Items.DIAMOND_SHOVEL, Items.DIAMOND_HOE);
-      addToolTrait(tools, "diamond", "mining_efficiency", Attributes.MINING_EFFICIENCY, 1.0, Operation.ADD_VALUE);
+      addMiningTrait(tools, "diamond", "mining_efficiency", Attributes.MINING_EFFICIENCY, 1.0, Operation.ADD_VALUE);
    }
 
    /**
