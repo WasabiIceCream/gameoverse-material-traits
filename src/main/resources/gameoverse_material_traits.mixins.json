@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"package": "net.gameoverse.materialtraits.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"mixins": [
+		"ItemStackMaterialTraitsMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
