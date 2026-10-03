@@ -1,4 +1,12 @@
 {
   "attribute.material_traits.fire_resistance": "Fire Resistance",
-  "attribute.material_traits.physical_resistance": "Physical Resistance"
+  "attribute.material_traits.physical_resistance": "Physical Resistance",
+  "material_traits.tooltip": "◆ %s: %s",
+  "material_traits.tooltip.full_set": "%s (full set: +%s)",
+  "material_traits.material.leather": "Leather",
+  "material_traits.material.chainmail": "Chainmail",
+  "material_traits.material.copper": "Copper",
+  "material_traits.material.gold": "Gold",
+  "material_traits.material.diamond": "Diamond",
+  "material_traits.material.netherite": "Netherite"
 }

@@ -41,7 +41,7 @@ import net.minecraft.world.item.Items;
  * status-effect/loot-table based, not attribute-shaped) and stay as original design.
  */
 public class MaterialTraits implements ModInitializer {
-   public record TraitEntry(Holder<Attribute> attribute, AttributeModifier modifier, EquipmentSlotGroup group) {
+   public record TraitEntry(String material, Holder<Attribute> attribute, AttributeModifier modifier, EquipmentSlotGroup group) {
    }
 
    private static final Map<Item, List<TraitEntry>> TRAITS = new HashMap<>();
@@ -52,7 +52,8 @@ public class MaterialTraits implements ModInitializer {
 
    private static void add(Item item, Holder<Attribute> attribute, String id, double amount, Operation operation, EquipmentSlotGroup group) {
       AttributeModifier modifier = new AttributeModifier(Identifier.fromNamespaceAndPath("material_traits", id), amount, operation);
-      TRAITS.computeIfAbsent(item, key -> new ArrayList<>()).add(new TraitEntry(attribute, modifier, group));
+      String material = id.substring(0, id.indexOf('_'));
+      TRAITS.computeIfAbsent(item, key -> new ArrayList<>()).add(new TraitEntry(material, attribute, modifier, group));
    }
 
    private record ArmorSet(Item helmet, Item chestplate, Item leggings, Item boots) {
