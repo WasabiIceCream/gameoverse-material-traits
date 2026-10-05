@@ -52,18 +52,23 @@ combat-relevant trait at all.
 | Leather | +2 `safe_fall_distance`/piece — "padded landing" | *(no tools)* |
 | Chainmail | +5% physical resistance/piece (melee + projectile) | *(no tools)* |
 | Copper | +0.15 `water_movement_efficiency`/piece | +1 `mining_efficiency` (mining tools only, not the sword) |
-| Wood | *(no armor)* | *(none — deliberate)* |
+| Wood | *(no vanilla armor; see the set bonus below)* | Woodsman: +2 `mining_efficiency` on the axe, shovel and hoe (not the pickaxe). Light: +0.2 `attack_speed` (all 5). Blunt: +0.5 `attack_knockback` (sword, axe) |
 | Stone | *(none — deliberate)* | *(none — deliberate)* |
 | Iron | *(none — deliberate)* | *(none — deliberate)* |
 | Gold | +1% `movement_speed`/piece (stacks to +4%) | +2 `mining_efficiency` (mining tools only), +1 `luck` (all tools) |
 | Diamond | +0.15 `armor_toughness`/piece, +8% fire resistance/piece | +1 `mining_efficiency` (mining tools only) |
 | Netherite | +0.025 `knockback_resistance`/piece (on top of its real 0.1 base) | +1 `attack_knockback` |
 
+**Wood set bonus**: all four pieces of Immersive Armors' Wooden Armor plus a wooden tool in the main hand give +1
+`mining_efficiency` and +0.1 `attack_speed` more (a transient player modifier, `WoodSetBonus`, checked twice a second;
+nothing without Immersive Armors). Wood's traits are the user's own design (2026-10-05), not from either reference
+mod: the wooden tier needed a job past the first pickaxe.
+
 Stone and Iron are deliberately bare — two honest "no bonus, no drawback"
 baselines at different power points, matching vanilla's own existing feel
-for those tiers; Wood joined them after research showed neither reference
-mod gives it a combat trait either (its original attack_speed bonus had
-no grounding and was removed). Diamond's mining bonus is intentionally
+for those tiers. Wood was bare too (its original attack_speed bonus had no
+grounding in either reference and was removed), until 1.2.0 gave it a job
+on purpose. Diamond's mining bonus is intentionally
 smaller than Gold's, so Gold keeps its "fastest miner" identity rather
 than getting crowded out by the higher tier. `mining_efficiency` only
 ever applies to a material's 4 actual mining tools, never the sword

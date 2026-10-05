@@ -8,5 +8,7 @@
   "material_traits.material.copper": "Copper",
   "material_traits.material.gold": "Gold",
   "material_traits.material.diamond": "Diamond",
-  "material_traits.material.netherite": "Netherite"
+  "material_traits.material.netherite": "Netherite",
+  "material_traits.material.wood": "Wood",
+  "material_traits.tooltip.wood_set": "◆ Wood set: wooden tools get +%s Mining Efficiency, +%s Attack Speed while you wear all four pieces of Wooden Armor"
 }

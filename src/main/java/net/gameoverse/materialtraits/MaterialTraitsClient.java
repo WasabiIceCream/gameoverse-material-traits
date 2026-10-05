@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Map;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextColor;
@@ -25,6 +29,7 @@ public class MaterialTraitsClient implements ClientModInitializer {
       "leather", 0xC28452,
       "chainmail", 0xB4B4B4,
       "copper", 0xE38B5E,
+      "wood", 0xB08850,
       "gold", 0xFFD83D,
       "diamond", 0x5DE8E0,
       "netherite", 0xA8939A
@@ -34,10 +39,25 @@ public class MaterialTraitsClient implements ClientModInitializer {
    public void onInitializeClient() {
       ItemTooltipCallback.EVENT.register((stack, context, flag, lines) -> {
          List<MaterialTraits.TraitEntry> traits = MaterialTraits.get(stack.getItem());
+         int at = insertAt(lines);
          if (!traits.isEmpty()) {
-            lines.add(insertAt(lines), line(traits));
+            lines.add(at++, line(traits));
+         }
+         if (IMMERSIVE_ARMORS && (WoodSetBonus.WOODEN_TOOLS.contains(stack.getItem()) || isWoodenArmor(stack))) {
+            lines.add(at, Component.translatable("material_traits.tooltip.wood_set",
+                  ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(WoodSetBonus.MINING),
+                  ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(WoodSetBonus.SPEED))
+               .withStyle(style -> style.withColor(TextColor.fromRgb(COLORS.get("wood")))));
          }
       });
+   }
+
+   private static final boolean IMMERSIVE_ARMORS = FabricLoader.getInstance().isModLoaded("immersive_armors");
+
+   /** Immersive Armors' Wooden Armor (looked up by id: the client never runs {@link WoodSetBonus}'s server tick). */
+   private static boolean isWoodenArmor(ItemStack stack) {
+      Identifier id = BuiltInRegistries.ITEM.getKey(stack.getItem());
+      return id.getNamespace().equals("immersive_armors") && id.getPath().startsWith("wooden_");
    }
 
    private static Component line(List<MaterialTraits.TraitEntry> traits) {

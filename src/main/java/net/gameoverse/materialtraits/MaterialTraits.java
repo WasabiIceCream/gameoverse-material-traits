@@ -34,9 +34,9 @@ import net.minecraft.world.item.Items;
  * attribute or a custom one ({@link MaterialAttributes}). Traits are checked against both Better
  * Than Adventure and Raspberry Flavoured where a real precedent exists (Leather/Diamond/Chainmail
  * all match one or both); where neither reference gives a material a combat-relevant trait at
- * all (Wood, Iron, Stone), it's left deliberately bare rather than inventing one - two of those
- * three (Iron, Stone) double as honest "no bonus, no drawback" baselines at different power
- * points, matching vanilla's own existing feel. Copper, Gold's tool trait, and Netherite's tool
+ * all (Iron, Stone), it's left deliberately bare rather than inventing one - they double as honest
+ * "no bonus, no drawback" baselines at different power points, matching vanilla's own existing feel.
+ * Wood was bare too until the user gave it a job of its own (see {@link #registerWoodTraits}). Copper, Gold's tool trait, and Netherite's tool
  * trait have no clean reference equivalent either way (RF's copper/gold mechanics are
  * status-effect/loot-table based, not attribute-shaped) and stay as original design.
  */
@@ -130,7 +130,9 @@ public class MaterialTraits implements ModInitializer {
       registerLeatherTraits();
       registerChainmailTraits();
       registerCopperTraits();
-      // Wood, Stone, and Iron: deliberately no traits - see class javadoc.
+      registerWoodTraits();
+      WoodSetBonus.register();
+      // Stone and Iron: deliberately no traits - see class javadoc.
       registerGoldTraits();
       registerDiamondTraits();
       registerNetheriteTraits();
@@ -152,6 +154,25 @@ public class MaterialTraits implements ModInitializer {
    private static void registerChainmailTraits() {
       ArmorSet set = new ArmorSet(Items.CHAINMAIL_HELMET, Items.CHAINMAIL_CHESTPLATE, Items.CHAINMAIL_LEGGINGS, Items.CHAINMAIL_BOOTS);
       addArmorTrait(set, "chainmail", "physical_resistance", MaterialAttributes.PHYSICAL_RESISTANCE, 0.05, Operation.ADD_VALUE);
+   }
+
+   /**
+    * Wood: the user's own design (2026-10-05), not from either reference mod, which give wood nothing - the deliberate
+    * "no trait" stance was reversed so the wooden tier has a job past the first pickaxe. "Woodsman": the axe, shovel
+    * and hoe outpace stone and iron on their own blocks (mining_efficiency 2 -> speed 7 on wood's base 2; stone 4,
+    * iron 6, diamond 8); the pickaxe stays the plain starter. "Light": every wooden tool swings faster. "Blunt": the
+    * sword and axe knock back further. Wearing all four pieces of Immersive Armors' Wooden Armor strengthens it
+    * further ({@link WoodSetBonus}).
+    */
+   private static void registerWoodTraits() {
+      ToolSet tools = new ToolSet(Items.WOODEN_SWORD, Items.WOODEN_PICKAXE, Items.WOODEN_AXE, Items.WOODEN_SHOVEL, Items.WOODEN_HOE);
+      for (Item tool : List.of(Items.WOODEN_AXE, Items.WOODEN_SHOVEL, Items.WOODEN_HOE)) {
+         add(tool, Attributes.MINING_EFFICIENCY, "wood_" + toolSuffix(tool) + "_mining_efficiency", 2.0, Operation.ADD_VALUE, EquipmentSlotGroup.MAINHAND);
+      }
+      addToolTrait(tools, "wood", "attack_speed", Attributes.ATTACK_SPEED, 0.2, Operation.ADD_VALUE);
+      for (Item tool : List.of(Items.WOODEN_SWORD, Items.WOODEN_AXE)) {
+         add(tool, Attributes.ATTACK_KNOCKBACK, "wood_" + toolSuffix(tool) + "_attack_knockback", 0.5, Operation.ADD_VALUE, EquipmentSlotGroup.MAINHAND);
+      }
    }
 
    /**
