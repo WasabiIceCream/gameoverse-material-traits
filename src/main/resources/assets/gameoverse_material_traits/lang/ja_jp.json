@@ -1,0 +1,14 @@
+{
+  "attribute.material_traits.fire_resistance": "火炎耐性",
+  "attribute.material_traits.physical_resistance": "物理耐性",
+  "material_traits.tooltip": "◆ %s: %s",
+  "material_traits.tooltip.full_set": "%s (フルセット: +%s)",
+  "material_traits.material.leather": "革",
+  "material_traits.material.chainmail": "チェーン",
+  "material_traits.material.copper": "銅",
+  "material_traits.material.gold": "金",
+  "material_traits.material.diamond": "ダイヤモンド",
+  "material_traits.material.netherite": "ネザライト",
+  "material_traits.material.wood": "木",
+  "material_traits.tooltip.wood_set": "◆ 木のセット: 木の防具を4つすべて着ている間、木の道具の採掘効率 +%s、攻撃速度 +%s"
+}
